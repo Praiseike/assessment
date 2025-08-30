@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Header } from "@/components/dashboard/Header";
 import { CurrentBadge } from "@/components/dashboard/CurrentBadge";
 import { NextBadgeProgress } from "@/components/dashboard/NextBadgeProgress";
@@ -26,10 +26,14 @@ export const CustomerDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [simulating, setSimulating] = useState(false);
+  const [initialLoad, setInitialLoad] = useState(true);
 
-  const fetchCustomerData = useCallback(async () => {
+  const fetchCustomerData = async () => {
     try {
-      setLoading(true);
+      if (initialLoad) {
+        setInitialLoad(false);
+        setLoading(true);
+      }
       setError(null);
       const data = await customerService.getDashboard(TEST_USER_ID);
       setCustomerData(data.data);
@@ -38,7 +42,7 @@ export const CustomerDashboard = () => {
     } finally {
       setLoading(false);
     }
-  }, []);
+  };
 
   const simulatePurchase = async () => {
     try {
@@ -55,11 +59,11 @@ export const CustomerDashboard = () => {
 
   useEffect(() => {
     fetchCustomerData();
-  }, [fetchCustomerData]);
-  
+  }, []);
+
 
   if (loading) return <LoadingScreen />;
-  if (error) return <ErrorScreen message={error} retry={fetchCustomerData} />
+  if (error) return <ErrorScreen message={error} retry={fetchCustomerData} />;
   if (!customerData) return <EmptyState />;
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50">
@@ -70,12 +74,14 @@ export const CustomerDashboard = () => {
 
         <NextBadgeProgress
           nextBadge={customerData.next_badge}
-          points={customerData.remaining_to_unlock_next_badge  }
+          points={customerData.remaining_to_unlock_next_badge}
         />
 
         <AchievementList achievements={customerData.unlocked_achievements} />
 
-        <AchievementNextList achievements={customerData.next_available_achievements} />
+        <AchievementNextList
+          achievements={customerData.next_available_achievements}
+        />
       </main>
     </div>
   );
