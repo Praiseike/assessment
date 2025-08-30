@@ -4,7 +4,7 @@ A full-stack loyalty program application built with Laravel 11 (Backend) and Rea
 
 ## System Requirements
 
-- **PHP**: 8.2 or higher
+- **PHP**: 8.2 or higher (8.3, 8.4+ are also supported)
 - **Node.js**: 22.x or higher
 - **Composer**: Latest version
 - **Database**: SQLite (default) or MySQL/PostgreSQL
@@ -12,19 +12,50 @@ A full-stack loyalty program application built with Laravel 11 (Backend) and Rea
 
 ## Pre-Installation Setup
 
+### Check Your Current PHP Version
+
+First, check if you already have PHP installed and which version:
+
+```bash
+php --version
+```
+
+If you see PHP 8.2 or higher, you can skip to the **Install PHP Extensions** section below.
+
 ### For Ubuntu/Debian Users
+
+**Option 1: Use your existing PHP version (8.2+)**
+
+If you already have PHP 8.2 or higher installed, just install the required extensions:
+
+```bash
+# Check your PHP version first
+PHP_VERSION=$(php -r "echo PHP_MAJOR_VERSION.'.'.PHP_MINOR_VERSION;")
+echo "Your PHP version: $PHP_VERSION"
+
+# Install extensions for your current PHP version
+sudo apt update
+sudo apt install php${PHP_VERSION}-cli php${PHP_VERSION}-mbstring php${PHP_VERSION}-xml php${PHP_VERSION}-bcmath php${PHP_VERSION}-tokenizer php${PHP_VERSION}-json php${PHP_VERSION}-curl php${PHP_VERSION}-zip php${PHP_VERSION}-sqlite3 php${PHP_VERSION}-mysql
+```
+
+**Option 2: Install a specific PHP version (if you don't have PHP or have an older version)**
 
 ```bash
 # Update package manager
 sudo apt update
 
-# Install PHP 8.2 and required extensions
+# Add PHP repository
 sudo apt install software-properties-common
 sudo add-apt-repository ppa:ondrej/php
 sudo apt update
-sudo apt install php8.2 php8.2-cli php8.2-fpm php8.2-mbstring php8.2-xml php8.2-bcmath php8.2-tokenizer php8.2-json php8.2-curl php8.2-zip php8.2-sqlite3 php8.2-mysql libapache2-mod-php8.2
 
-# Install Composer
+# Install PHP 8.2 (you can also use 8.3 or 8.4)
+sudo apt install php8.2 php8.2-cli php8.2-mbstring php8.2-xml php8.2-bcmath php8.2-tokenizer php8.2-json php8.2-curl php8.2-zip php8.2-sqlite3 php8.2-mysql
+```
+
+**Install Composer:**
+
+```bash
 curl -sS https://getcomposer.org/installer | php
 sudo mv composer.phar /usr/local/bin/composer
 
@@ -35,18 +66,33 @@ composer --version
 
 ### For macOS Users
 
+**Option 1: Use existing PHP (if 8.2+)**
+
+```bash
+# Check your PHP version
+php --version
+
+# If you have PHP 8.2+, you might already have the necessary extensions
+# macOS PHP installations typically include most required extensions
+```
+
+**Option 2: Install via Homebrew**
+
 ```bash
 # Install Homebrew (if not already installed)
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
-# Install PHP 8.2
-brew install php@8.2
-brew link php@8.2 --force
+# Install PHP (this will install the latest stable version)
+brew install php
+
+# Or install a specific version
+# brew install php@8.2
+# brew install php@8.3
 
 # Install Composer
 brew install composer
 
-# Install Node.js 22
+# Install Node.js
 brew install node@22
 brew link node@22 --force
 
@@ -59,10 +105,22 @@ npm --version
 
 ### For Windows Users
 
-1. **Install PHP 8.2:**
-   - Download from [php.net](https://windows.php.net/download/)
+**Option 1: Check existing PHP installation**
+
+```cmd
+# Check if you have PHP installed
+php --version
+
+# If you have PHP 8.2+, you're good to go!
+```
+
+**Option 2: Install PHP (if needed)**
+
+1. **Install PHP:**
+   - Download the latest PHP 8.x from [php.net](https://windows.php.net/download/) (8.2, 8.3, or 8.4)
    - Extract to `C:\php`
    - Add `C:\php` to your system PATH
+   - Copy `php.ini-development` to `php.ini`
    - Enable required extensions in `php.ini`:
      ```ini
      extension=mbstring
@@ -71,15 +129,27 @@ npm --version
      extension=sqlite3
      extension=curl
      extension=fileinfo
+     extension=zip
      ```
 
 2. **Install Composer:**
    - Download from [getcomposer.org](https://getcomposer.org/download/)
    - Run the installer
 
-3. **Install Node.js 22:**
-   - Download from [nodejs.org](https://nodejs.org/)
+3. **Install Node.js:**
+   - Download Node.js 22.x from [nodejs.org](https://nodejs.org/)
    - Install the LTS version
+
+### Quick Compatibility Check
+
+Before proceeding, run this command to verify your PHP installation meets Laravel 11 requirements:
+
+```bash
+# Check PHP version and required extensions
+php -v && php -m | grep -E "(mbstring|openssl|PDO|sqlite3|curl|fileinfo|zip|tokenizer)"
+```
+
+You should see PHP 8.2+ and all the required extensions listed.
 
 ## Installation Instructions
 
@@ -104,6 +174,10 @@ cp .env.example .env
 
 # Generate application key
 php artisan key:generate
+
+# Set up database (SQLite is used by default)
+# The database file will be created automatically
+touch database/database.sqlite
 
 # Run database migrations
 php artisan migrate
@@ -168,9 +242,18 @@ Visit `http://localhost:5173` and you should see the customer dashboard.
 # Check current PHP version
 php --version
 
-# If wrong version, update alternatives (Ubuntu/Debian)
-sudo update-alternatives --install /usr/bin/php php /usr/bin/php8.2 82
+# If you need to switch between PHP versions (Ubuntu/Debian)
+# List available PHP versions
+sudo update-alternatives --list php
+
+# Set default PHP version (replace X.Y with your desired version)
+sudo update-alternatives --install /usr/bin/php php /usr/bin/phpX.Y XY
 sudo update-alternatives --config php
+
+# For macOS with Homebrew
+# Switch between PHP versions
+brew unlink php@8.2 && brew link php@8.3
+# Or use: brew link php@8.3 --force --overwrite
 ```
 
 **Composer Issues:**
