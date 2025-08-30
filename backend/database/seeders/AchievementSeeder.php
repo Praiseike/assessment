@@ -28,7 +28,7 @@ class AchievementSeeder extends Seeder
             [
                 'name' => 'Big Spender',
                 'description' => 'Spend ₦10,000 in total',
-                'required_purchases' => 0,
+                'required_purchases' => null,
                 'required_amount' => 10000,
                 'badge_name' => 'Silver Shopper',
             ],
@@ -42,7 +42,7 @@ class AchievementSeeder extends Seeder
             [
                 'name' => 'Premium Shopper',
                 'description' => 'Spend ₦50,000 in total',
-                'required_purchases' => 0,
+                'required_purchases' => null,
                 'required_amount' => 50000,
                 'badge_name' => 'Gold Shopper',
             ],
@@ -56,7 +56,7 @@ class AchievementSeeder extends Seeder
             [
                 'name' => 'Elite Shopper',
                 'description' => 'Spend ₦100,000 in total',
-                'required_purchases' => 0,
+                'required_purchases' => null,
                 'required_amount' => 100000,
                 'badge_name' => 'Platinum Shopper',
             ],
